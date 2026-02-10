@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs/promises'
 
-const LEADERBOARD_PATH = '/Users/duljan/.openclaw/workspace/projects/blocket/leaderboard.json'
+const LEADERBOARD_PATH = '/Users/duljan/.openclaw/workspace/projects/blocket/blocket_leaderboard.json'
 
 export async function GET() {
   try {
