@@ -55,6 +55,47 @@ function getRecommendation(score) {
   return '⚠️ Inte optimal'
 }
 
+// ==================== MARKET INTELLIGENCE DATA ====================
+const marketData = {
+  community: {
+    githubStars: 184000,
+    githubForks: 30900,
+    githubIssues: 3023,
+    clawhubSkills: 5705,
+    totalDatapoints: 67,
+    researchDate: '2026-02-11',
+    sentiment: 'bullish',
+    topSources: ['GitHub', 'Reddit', 'Hacker News', 'ClawHub']
+  },
+  topUseCases: [
+    { id: 1, name: 'Content Repurposing', revenue: '$600-1200/mån', demand: '🔥🔥🔥', difficulty: 'Medium', description: 'Blogg → X + LinkedIn + newsletter automation' },
+    { id: 2, name: 'Setup-as-a-Service', revenue: '$50-200 + $50/mån', demand: '🔥🔥🔥', difficulty: 'Low', description: 'Fiverr-gig: From Install to Useful på 30 min' },
+    { id: 3, name: 'WhatsApp Business Automation', revenue: '$400-800/mån', demand: '🔥🔥🔥', difficulty: 'Medium', description: 'Moltflow-ekosystem för business automation' },
+    { id: 4, name: 'Säkerhetsgranskning', revenue: '$100-500', demand: '🔥🔥', difficulty: 'High', description: 'Audit av skills för malware/clickfix' },
+    { id: 5, name: 'Claw Tasks AI', revenue: '$500-1000/mån', demand: '🔥🔥', difficulty: 'Medium', description: 'Agent tar bounties autonomt (50 bounties, 28 completed)' },
+    { id: 6, name: 'DevOps Automation', revenue: '$1000-3000/mån', demand: '🔥🔥', difficulty: 'High', description: 'Portainer, K8s, AWS automation för tech-företag' },
+    { id: 7, name: 'Research-as-a-Service', revenue: '$300-600/mån', demand: '🔥🔥', difficulty: 'Low', description: 'Automatiserad research med 253+ research-skills' },
+    { id: 8, name: 'Swedish Business Tools', revenue: '$200-500/mån', demand: '🔥', difficulty: 'Low', description: 'Enda svenska skillen = 0 konkurrens' },
+    { id: 9, name: 'Siri/iMessage Integration', revenue: '$100-300', demand: '🔥', difficulty: 'Low', description: 'Röststyrd OpenClaw via Siri' },
+    { id: 10, name: 'AGENTS.md Workshops', revenue: '$200-500', demand: '🔥', difficulty: 'Low', description: 'Dokumentation-driven utveckling för team' }
+  ],
+  marketGaps: [
+    { id: 1, name: 'Setup → Useful Bryggan', problem: '90% fastnar vid setup', solution: 'Fiverr + YouTube-tutorial + Starter Pack', priority: '🔴 HÖG', potential: '💰💰' },
+    { id: 2, name: 'Modellval-förvirring', problem: 'Billiga modeller funkar inte', solution: 'Cost vs Performance Guide', priority: '🟡 MED', potential: '📈' },
+    { id: 3, name: 'Säkra Skills', problem: '341 skills hade malware', solution: 'Duljan Verified™ - granskade skills', priority: '🔴 HÖG', potential: '💰💰' },
+    { id: 4, name: 'Content Repurposing', problem: 'Alla vill producera content', solution: 'Content Repurposer skill', priority: '🔴 HÖG', potential: '💰💰💰' },
+    { id: 5, name: 'Agent-ekonomin', problem: 'Få vet om Claw Tasks', solution: 'First-to-market content + koppla agent', priority: '🔴 HÖG', potential: '💰💰💰' },
+    { id: 6, name: 'Icke-engelska marknader', problem: 'Nästan alla skills är engelska', solution: 'Nordic Business Bundle', priority: '🟢 LÅG', potential: '💰' }
+  ],
+  competitors: [
+    { name: 'Markaicode', focus: 'Content repurposing', strength: 'Etablerad, $600-1200/mån', weakness: 'Ingen nordisk närvaro', threat: 'Medium' },
+    { name: 'memU bot', focus: 'Säkerhetsarkitektur', strength: 'Bättre minneshantering', weakness: 'Mindre community', threat: 'Low' },
+    { name: 'PAIO', focus: 'Personal AI Operator', strength: 'BYOK (Bring Your Own Key)', weakness: 'Mindre känd', threat: 'Low' },
+    { name: 'Claude Cowork', focus: 'Samarbete', strength: 'Strängare säkerhet', weakness: 'Mindre agentic', threat: 'Medium' },
+    { name: 'Openwork.bot', focus: 'Agent-jobbmarknad', strength: '500 jobb, $OW token', weakness: '12 aktiva tvister', threat: 'Low' }
+  ]
+}
+
 // ==================== COMPONENT ====================
 export default function MissionControl() {
   const [status, setStatus] = useState({ state: 'offline', task: null, since: null, subAgents: [] })
@@ -174,6 +215,7 @@ export default function MissionControl() {
           {[
             { id: 'overview', label: '📊 Overview' },
             { id: 'tasks', label: '📋 Tasks' },
+            { id: 'market', label: '🔍 Market Intelligence' },
             { id: 'blocket', label: '🔍 Blocket' },
             { id: 'feed', label: '🐦 X/Twitter' },
           ].map(t => (
@@ -350,6 +392,256 @@ export default function MissionControl() {
                       <div style={{ fontWeight: 600, fontSize: 13 }}>{t.name}</div>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ====== MARKET INTELLIGENCE TAB ====== */}
+        {tab === 'market' && (
+          <div>
+            {/* Stats Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 20 }}>
+              <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', padding: 18 }}>
+                <div style={{ fontSize: 11, color: '#71717a', marginBottom: 4 }}>⭐ GitHub Stars</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>184k</div>
+                <div style={{ fontSize: 12, color: '#48bb78', marginTop: 4 }}>↗ Snabbast växande</div>
+              </div>
+              <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', padding: 18 }}>
+                <div style={{ fontSize: 11, color: '#71717a', marginBottom: 4 }}>🧰 ClawHub Skills</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#ecc94b' }}>5,705+</div>
+                <div style={{ fontSize: 12, color: '#ecc94b', marginTop: 4 }}>Community-built</div>
+              </div>
+              <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', padding: 18 }}>
+                <div style={{ fontSize: 11, color: '#71717a', marginBottom: 4 }}>📊 Research Datapunkter</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#667eea' }}>67</div>
+                <div style={{ fontSize: 12, color: '#71717a', marginTop: 4 }}>2026-02-11</div>
+              </div>
+              <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', padding: 18 }}>
+                <div style={{ fontSize: 11, color: '#71717a', marginBottom: 4 }}>💰 Est. Månadspotential</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: '#48bb78' }}>5k+ kr</div>
+                <div style={{ fontSize: 12, color: '#48bb78', marginTop: 4 }}>Vid 2026-08-09</div>
+              </div>
+            </div>
+
+            {/* Main Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {/* LEFT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                
+                {/* Community Pulse */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>💓</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Community Pulse</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#48bb78', background: '#48bb7822', padding: '2px 8px', borderRadius: 10 }}>BULLISH</span>
+                  </div>
+                  <div style={{ padding: 18 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                      <div style={{ background: '#1a1a1a', padding: 12, borderRadius: 8 }}>
+                        <div style={{ fontSize: 11, color: '#71717a' }}>GitHub Forks</div>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: '#fff' }}>30.9k</div>
+                      </div>
+                      <div style={{ background: '#1a1a1a', padding: 12, borderRadius: 8 }}>
+                        <div style={{ fontSize: 11, color: '#71717a' }}>Öppna Issues</div>
+                        <div style={{ fontSize: 20, fontWeight: 700, color: '#f56565' }}>3,023</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#d4d4d8', lineHeight: 1.6, marginBottom: 12 }}>
+                      <strong>🔥 Heta trender:</strong> Kostnadsoptimering (MiniMax, DeepSeek), säkerhetsmedvetenhet efter 341 malware-skills, och setup-tjänster i bristområde.
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {['Säkerhet', 'Setup', 'Kostnader', 'Skills', 'Bounties'].map(tag => (
+                        <span key={tag} style={{ fontSize: 11, background: '#27272a', padding: '4px 10px', borderRadius: 10, color: '#a1a1aa' }}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top Use Cases */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>🚀</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Top 10 Use Cases</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#71717a' }}>Efter potential</span>
+                  </div>
+                  <div style={{ maxHeight: 500, overflowY: 'auto' }}>
+                    {marketData.topUseCases.map((useCase, i) => (
+                      <div key={useCase.id} style={{ padding: '12px 18px', borderBottom: '1px solid #1a1a1a', background: i < 3 ? 'rgba(102, 126, 234, 0.05)' : 'transparent' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: i < 3 ? '#ecc94b' : '#71717a', minWidth: 20 }}>#{i + 1}</span>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{useCase.name}</span>
+                          <span style={{ marginLeft: 'auto', fontSize: 12, color: '#48bb78', fontWeight: 600 }}>{useCase.revenue}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#a1a1aa', marginLeft: 30 }}>{useCase.description}</div>
+                        <div style={{ display: 'flex', gap: 8, marginLeft: 30, marginTop: 6 }}>
+                          <span style={{ fontSize: 10, color: '#ecc94b' }}>{useCase.demand} Efterfrågan</span>
+                          <span style={{ fontSize: 10, color: '#71717a' }}>• Svårighet: {useCase.difficulty}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Duljan Flywheel */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>⚙️</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Duljan Flywheel</span>
+                  </div>
+                  <div style={{ padding: 24 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      {/* Flywheel Steps */}
+                      <div style={{ 
+                        background: 'linear-gradient(135deg, #667eea22, #764ba222)', 
+                        border: '1px solid #667eea44', 
+                        borderRadius: 12, 
+                        padding: '16px 24px',
+                        width: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ fontSize: 24, marginBottom: 4 }}>📝</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#667eea' }}>CONTENT</div>
+                        <div style={{ fontSize: 11, color: '#a1a1aa' }}>YouTube, X, LinkedIn</div>
+                      </div>
+                      
+                      <div style={{ fontSize: 20, color: '#667eea' }}>↓</div>
+                      
+                      <div style={{ 
+                        background: 'linear-gradient(135deg, #764ba222, #667eea22)', 
+                        border: '1px solid #764ba244', 
+                        borderRadius: 12, 
+                        padding: '16px 24px',
+                        width: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ fontSize: 24, marginBottom: 4 }}>🧰</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#764ba2' }}>SKILLS</div>
+                        <div style={{ fontSize: 11, color: '#a1a1aa' }}>ClawHub, GitHub</div>
+                      </div>
+                      
+                      <div style={{ fontSize: 20, color: '#764ba2' }}>↓</div>
+                      
+                      <div style={{ 
+                        background: 'linear-gradient(135deg, #667eea22, #764ba222)', 
+                        border: '1px solid #667eea44', 
+                        borderRadius: 12, 
+                        padding: '16px 24px',
+                        width: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ fontSize: 24, marginBottom: 4 }}>💼</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#667eea' }}>FREELANCE</div>
+                        <div style={{ fontSize: 11, color: '#a1a1aa' }}>Fiverr, Upwork</div>
+                      </div>
+                      
+                      <div style={{ fontSize: 20, color: '#667eea' }}>↓</div>
+                      
+                      <div style={{ 
+                        background: 'linear-gradient(135deg, #764ba222, #667eea22)', 
+                        border: '1px solid #764ba244', 
+                        borderRadius: 12, 
+                        padding: '16px 24px',
+                        width: '100%',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ fontSize: 24, marginBottom: 4 }}>🤖</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#764ba2' }}>AUTOMATION</div>
+                        <div style={{ fontSize: 11, color: '#a1a1aa' }}>Claw Tasks AI, bots</div>
+                      </div>
+                      
+                      <div style={{ fontSize: 20, color: '#764ba2' }}>↺</div>
+                      <div style={{ fontSize: 12, color: '#71717a', fontStyle: 'italic' }}>Frigör tid → mer content</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                
+                {/* Market Gaps */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>🎯</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Marknadsluckor</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#71717a' }}>6 gaps identifierade</span>
+                  </div>
+                  <div style={{ maxHeight: 550, overflowY: 'auto' }}>
+                    {marketData.marketGaps.map((gap) => (
+                      <div key={gap.id} style={{ padding: '14px 18px', borderBottom: '1px solid #1a1a1a' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                          <span style={{ fontSize: 14 }}>{gap.priority === '🔴 HÖG' ? '🔴' : gap.priority === '🟡 MED' ? '🟡' : '🟢'}</span>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{gap.name}</span>
+                          <span style={{ marginLeft: 'auto', fontSize: 12 }}>{gap.potential}</span>
+                        </div>
+                        <div style={{ marginLeft: 22 }}>
+                          <div style={{ fontSize: 12, color: '#f56565', marginBottom: 4 }}>❌ {gap.problem}</div>
+                          <div style={{ fontSize: 12, color: '#48bb78' }}>✅ {gap.solution}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Competitor Watch */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>👁️</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Competitor Watch</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#71717a' }}>5 aktörer</span>
+                  </div>
+                  <div>
+                    {marketData.competitors.map((comp, i) => (
+                      <div key={i} style={{ padding: '14px 18px', borderBottom: '1px solid #1a1a1a' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{comp.name}</span>
+                          <span style={{ 
+                            marginLeft: 'auto', 
+                            fontSize: 11, 
+                            padding: '2px 8px', 
+                            borderRadius: 10,
+                            background: comp.threat === 'Medium' ? '#ecc94b22' : '#48bb7822',
+                            color: comp.threat === 'Medium' ? '#ecc94b' : '#48bb78'
+                          }}>{comp.threat} threat</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: '#a1a1aa', marginBottom: 4 }}>Focus: {comp.focus}</div>
+                        <div style={{ fontSize: 12, color: '#48bb78', marginBottom: 2 }}>✓ {comp.strength}</div>
+                        <div style={{ fontSize: 12, color: '#f56565' }}>✗ {comp.weakness}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Revenue Streams Summary */}
+                <div style={{ background: '#111', borderRadius: 12, border: '1px solid #27272a', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 18px', borderBottom: '1px solid #27272a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>💰</span>
+                    <span style={{ fontWeight: 700, fontSize: 15 }}>Intäktsströmmar</span>
+                  </div>
+                  <div style={{ padding: 18 }}>
+                    {[
+                      { name: 'ClawHub Skills', type: 'Passiv', timeline: 'Nu', potential: '500-1000 kr/mån' },
+                      { name: 'Fiverr/Upwork', type: 'Aktiv', timeline: '1-2 veckor', potential: '1500-2500 kr/mån' },
+                      { name: 'Claw Tasks AI', type: 'Semi-passiv', timeline: '2-3 veckor', potential: '500-1000 kr/mån' },
+                      { name: 'YouTube AdSense', type: 'Passiv', timeline: '3-6 mån', potential: '500-1500 kr/mån' },
+                      { name: 'Managed Services', type: 'Aktiv', timeline: '1-3 mån', potential: '2000-5000 kr/mån' }
+                    ].map((stream, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '10px 0', borderBottom: i < 4 ? '1px solid #1a1a1a' : 'none' }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{stream.name}</div>
+                          <div style={{ fontSize: 11, color: '#71717a' }}>{stream.type} • {stream.timeline}</div>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#48bb78', fontWeight: 600 }}>{stream.potential}</div>
+                      </div>
+                    ))}
+                    <div style={{ marginTop: 16, padding: 12, background: '#48bb7811', borderRadius: 8, textAlign: 'center' }}>
+                      <div style={{ fontSize: 12, color: '#71717a' }}>Totalt mål</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: '#48bb78' }}>5,000+ kr/mån</div>
+                      <div style={{ fontSize: 11, color: '#71717a' }}>vid 2026-08-09</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
