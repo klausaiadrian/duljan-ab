@@ -1,81 +1,90 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs/promises'
+import path from 'path'
 
-const LEADERBOARD_PATH = '/Users/duljan/.openclaw/workspace/projects/blocket/blocket_leaderboard.json'
+const BLOCKET_DIR = '/Users/duljan/.openclaw/workspace/projects/blocket'
+const LEADERBOARD_FILE = path.join(BLOCKET_DIR, 'blocket_leaderboard.json')
+const ALL_LISTINGS_FILE = path.join(BLOCKET_DIR, 'blocket_all_listings.json')
+const SEEN_FILE = path.join(BLOCKET_DIR, 'blocket_seen_listings.json')
 
 export async function GET() {
   try {
-    const content = await fs.readFile(LEADERBOARD_PATH, 'utf-8')
-    const data = JSON.parse(content)
-    return NextResponse.json(data)
-  } catch (error) {
-    // Return mock data if file doesn't exist
-    return NextResponse.json({
-      deals: [
-        {
-          id: 'mock-1',
-          title: 'MacBook Pro 14" M3 Pro 18GB RAM 512GB SSD',
-          price: 18900,
-          originalPrice: 24995,
-          score: 94,
-          location: 'Stockholm',
-          category: 'Datorer',
-          url: 'https://blocket.se',
-          image: null,
-          postedAt: '2026-02-10 18:30'
-        },
-        {
-          id: 'mock-2',
-          title: 'iPhone 15 Pro 256GB Natural Titanium',
-          price: 8900,
-          originalPrice: 12995,
-          score: 91,
-          location: 'Göteborg',
-          category: 'Telefoner',
-          url: 'https://blocket.se',
-          image: null,
-          postedAt: '2026-02-10 17:45'
-        },
-        {
-          id: 'mock-3',
-          title: 'Sony A7IV + 24-70mm f/2.8 GM II',
-          price: 42000,
-          originalPrice: 58995,
-          score: 89,
-          location: 'Malmö',
-          category: 'Foto',
-          url: 'https://blocket.se',
-          image: null,
-          postedAt: '2026-02-10 16:20'
-        },
-        {
-          id: 'mock-4',
-          title: 'Samsung 49" Odyssey G9 240Hz Curved',
-          price: 7500,
-          originalPrice: 13995,
-          score: 87,
-          location: 'Uppsala',
-          category: 'Datorer',
-          url: 'https://blocket.se',
-          image: null,
-          postedAt: '2026-02-10 15:10'
-        },
-        {
-          id: 'mock-5',
-          title: 'iPad Pro 12.9" M2 256GB WiFi + 5G',
-          price: 8200,
-          originalPrice: 13995,
-          score: 85,
-          location: 'Linköping',
-          category: 'Surfplattor',
-          url: 'https://blocket.se',
-          image: null,
-          postedAt: '2026-02-10 14:55'
+    // Read leaderboard
+    let leaderboard = []
+    try {
+      const data = await fs.readFile(LEADERBOARD_FILE, 'utf-8')
+      leaderboard = JSON.parse(data)
+    } catch (e) {
+      leaderboard = []
+    }
+
+    // Read latest listings
+    let latest = []
+    try {
+      const files = await fs.readdir(BLOCKET_DIR)
+      const jsonFiles = files
+        .filter(f => f.startsWith('blocket_listings_') && f.endsWith('.json'))
+        .sort()
+        .reverse()
+      
+      if (jsonFiles.length > 0) {
+        const latestFile = path.join(BLOCKET_DIR, jsonFiles[0])
+        const data = await fs.readFile(latestFile, 'utf-8')
+        latest = JSON.parse(data)
+      }
+    } catch (e) {
+      latest = []
+    }
+
+    // Read seen listings count
+    let seenCount = 0
+    try {
+      const data = await fs.readFile(SEEN_FILE, 'utf-8')
+      const seen = JSON.parse(data)
+      seenCount = seen.length
+    } catch (e) {
+      seenCount = 0
+    }
+
+    // Get last scrape time from latest file
+    let lastScrape = null
+    try {
+      const files = await fs.readdir(BLOCKET_DIR)
+      const jsonFiles = files
+        .filter(f => f.startsWith('blocket_listings_') && f.endsWith('.json'))
+        .sort()
+        .reverse()
+      if (jsonFiles.length > 0) {
+        const match = jsonFiles[0].match(/(\d{8})_(\d{6})/)
+        if (match) {
+          const [_, date, time] = match
+          const year = date.slice(0, 4)
+          const month = date.slice(4, 6)
+          const day = date.slice(6, 8)
+          const hour = time.slice(0, 2)
+          const min = time.slice(2, 4)
+          lastScrape = `${year}-${month}-${day}T${hour}:${min}:00`
         }
-      ],
-      lastUpdated: new Date().toISOString(),
-      totalDeals: 5,
-      error: error.message
+      }
+    } catch (e) {
+      lastScrape = null
+    }
+
+    return NextResponse.json({
+      leaderboard: leaderboard.slice(0, 20),
+      latest: latest.slice(0, 50),
+      stats: {
+        totalTracked: seenCount,
+        topDeals: leaderboard.length,
+        lastScrape
+      }
+    })
+  } catch (e) {
+    return NextResponse.json({ 
+      leaderboard: [], 
+      latest: [], 
+      stats: { totalTracked: 0, topDeals: 0, lastScrape: null },
+      error: e.message 
     })
   }
 }
